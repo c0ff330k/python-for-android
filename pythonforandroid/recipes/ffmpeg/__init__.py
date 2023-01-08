@@ -112,7 +112,6 @@ class FFMpegRecipe(Recipe):
                 '--disable-static',
                 '--disable-debug',
                 '--enable-shared',
-                '--enable-libv4l2',
             ]
 
             if 'arm64' in arch.arch:
