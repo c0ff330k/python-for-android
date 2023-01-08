@@ -67,6 +67,11 @@ class FFMpegRecipe(Recipe):
                     'libvpx', self.ctx).get_build_dir(arch.arch)
                 cflags += ['-I' + build_dir + '/include/']
                 ldflags += ['-lvpx', '-L' + build_dir + '/lib/']
+                
+                # Enable filter library:
+                flags += [
+                    '--enable-avfilter',
+                ]
 
                 # Enable all codecs:
                 flags += [
@@ -99,7 +104,7 @@ class FFMpegRecipe(Recipe):
 
             # other flags:
             flags += [
-                '--enable-filter=aresample,resample,crop,adelay,volume,scale',
+                '--enable-filter=aresample,resample,crop,adelay,volume,scale,yadif',
                 '--enable-protocol=file,http,hls,udp,tcp',
                 '--enable-small',
                 '--enable-hwaccels',
@@ -107,6 +112,7 @@ class FFMpegRecipe(Recipe):
                 '--disable-static',
                 '--disable-debug',
                 '--enable-shared',
+                '--enable-libv4l2',
             ]
 
             if 'arm64' in arch.arch:
