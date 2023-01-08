@@ -23,7 +23,7 @@ def is_kivy_affected_by_deadlock_issue(recipe=None, arch=None):
 
 class KivyRecipe(CythonRecipe):
     version = '2.1.0'
-    url = 'https://github.com/kivy/kivy/archive/{version}.zip'
+    url = 'https://github.com/c0ff330k/kivy/archive/master.zip'
     name = 'kivy'
 
     depends = ['sdl2', 'pyjnius', 'setuptools']
