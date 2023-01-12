@@ -65,7 +65,7 @@ class VlcRecipe(Recipe):
                 info("compiling vlc from sources")
                 debug("environment: {}".format(env))
                 if not isfile(join('bin', 'VLC-debug.apk')):
-                    shprint(sh.Command('./compile.sh'), _env=env,
+                    shprint(sh.Command('./buildsystem/compile.sh'), _env=env,
                             _tail=50, _critical=True)
                 shprint(sh.Command('./compile-libvlc.sh'), _env=env,
                         _tail=50, _critical=True)
