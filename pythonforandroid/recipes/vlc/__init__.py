@@ -12,7 +12,7 @@ class VlcRecipe(Recipe):
 
     depends = []
 
-    port_git = 'http://git.videolan.org/git/vlc-ports/android.git'
+    port_git = 'https://github.com/videolan/vlc-android/archive/master.zip'
 #    vlc_git = 'http://git.videolan.org/git/vlc.git'
     ENV_LIBVLC_AAR = 'LIBVLC_AAR'
     aars = {}  # for future use of multiple arch
