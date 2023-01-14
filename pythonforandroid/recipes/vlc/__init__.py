@@ -1,7 +1,7 @@
 from pythonforandroid.toolchain import Recipe, current_directory
 from pythonforandroid.logger import info, debug, shprint, warning
 from os.path import join, isdir, isfile, dirname
-from os import environ
+from os import environ, listdir
 import sh
 import zipfile
 
@@ -60,7 +60,7 @@ class VlcRecipe(Recipe):
         ndks_dir = dirname(self.ctx.ndk_dir)
         ndk_name = ''
         if isdir(join(ndks_dir, 'vlc_ndk')):
-            ndk_name = os.listdir(join(ndks_dir, 'vlc_ndk'))[0]
+            ndk_name = listdir(join(ndks_dir, 'vlc_ndk'))[0]
         else:
             shprint(sh.Command('wget'), '-O', join(ndks_dir, 'vlc_ndk.zip'), self.specific_ndk, _tail=50, _critical=True)
             with zipfile.ZipFile(join(ndks_dir, 'vlc_ndk.zip'), 'r') as zip_ref:
