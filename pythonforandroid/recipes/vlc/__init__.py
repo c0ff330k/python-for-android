@@ -40,7 +40,7 @@ class VlcRecipe(Recipe):
             if not isfile(join(port_dir, 'compile.sh')):
                 info("clone vlc port for android sources from {}".format(
                             self.port_git))
-                shprint(sh.git, 'clone', '-b', '3.0.x', self.port_git, port_dir,
+                shprint(sh.git, 'clone', '-b', '4.0', self.port_git, port_dir,
                         _tail=20, _critical=True)
 # now "git clone ..." is a part of compile.sh
 #            vlc_dir = join(port_dir, 'vlc')
