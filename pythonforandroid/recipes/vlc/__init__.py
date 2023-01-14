@@ -13,7 +13,6 @@ class VlcRecipe(Recipe):
 
     depends = []
     specific_ndk = 'https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip'
-    ndks_dir = dirname(ctx.ndk_dir)
     port_git = 'https://github.com/videolan/vlc-android.git'
 #    vlc_git = 'http://git.videolan.org/git/vlc.git'
     ENV_LIBVLC_AAR = 'LIBVLC_AAR'
@@ -58,6 +57,7 @@ class VlcRecipe(Recipe):
         aar = self.aars[arch]
         
         # install specific ndk
+        ndks_dir = dirname(self.ctx.ndk_dir)
         specific_ndk_zip = self.download_file(specific_ndk, ndks_dir)
         ndk_for_vlc = join(ndks_dir, 'ndk_for_vlc')
         with zipfile.ZipFile(join(ndks_dir, specific_ndk_zip), 'r') as zip_ref:
