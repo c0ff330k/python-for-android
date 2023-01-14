@@ -78,8 +78,8 @@ class VlcRecipe(Recipe):
                 info("compiling vlc from sources")
                 debug("environment: {}".format(env))
                 if not isfile(join('bin', 'VLC-debug.apk')):
-                    shprint(sh.Command('./buildsystem/compile.sh'), '-a', 'armeabi-v7a', _env=env, _tail=50, _critical=True)
-                shprint(sh.Command('./buildsystem/compile.sh'), '-l', '-a', 'armeabi-v7a', '-r', _env=env, _tail=50, _critical=True)
+                    shprint(sh.Command('./buildsystem/compile.sh'), '-a', 'arm64-v8a', _env=env, _tail=50, _critical=True)
+                shprint(sh.Command('./buildsystem/compile.sh'), '-l', '-a', 'arm64-v8a', '-r', _env=env, _tail=50, _critical=True)
         shprint(sh.cp, '-a', aar, self.ctx.aars_dir)
 
 
