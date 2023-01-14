@@ -13,7 +13,7 @@ class VlcRecipe(Recipe):
 
     depends = []
     specific_ndk = 'https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip'
-    ndks_dir = dirname(self.ctx.ndk_dir)
+    ndks_dir = dirname(ctx.ndk_dir)
     port_git = 'https://github.com/videolan/vlc-android.git'
 #    vlc_git = 'http://git.videolan.org/git/vlc.git'
     ENV_LIBVLC_AAR = 'LIBVLC_AAR'
