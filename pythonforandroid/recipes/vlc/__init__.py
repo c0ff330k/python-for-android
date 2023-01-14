@@ -58,7 +58,7 @@ class VlcRecipe(Recipe):
         
         # install specific ndk
         ndks_dir = dirname(self.ctx.ndk_dir)
-        specific_ndk_zip = self.download_file(specific_ndk, ndks_dir)
+        specific_ndk_zip = self.download_file(self.specific_ndk, ndks_dir)
         ndk_for_vlc = join(ndks_dir, 'ndk_for_vlc')
         with zipfile.ZipFile(join(ndks_dir, specific_ndk_zip), 'r') as zip_ref:
             zip_ref.extractall(ndk_for_vlc)
