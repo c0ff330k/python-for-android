@@ -58,18 +58,21 @@ class VlcRecipe(Recipe):
         
         # install specific ndk
         ndks_dir = dirname(self.ctx.ndk_dir)
-        specific_ndk_zip = 'vlc_ndk.zip'
-        shprint(sh.Command('wget'), '-O', join(ndks_dir, specific_ndk_zip), self.specific_ndk, _tail=50, _critical=True)
-        ndk_for_vlc = join(ndks_dir, 'ndk_for_vlc')
-        with zipfile.ZipFile(join(ndks_dir, specific_ndk_zip), 'r') as zip_ref:
-            zip_ref.extractall(ndk_for_vlc)
+        ndk_name = ''
+        if isdir(join(ndks_dir, 'vlc_ndk')):
+            ndk_name = os.listdir(join(ndks_dir, 'vlc_ndk'))[0]
+        else:
+            shprint(sh.Command('wget'), '-O', join(ndks_dir, 'vlc_ndk.zip'), self.specific_ndk, _tail=50, _critical=True)
+            with zipfile.ZipFile(join(ndks_dir, 'vlc_ndk.zip'), 'r') as zip_ref:
+                ndk_name = zip_ref.namelist()[0]
+                zip_ref.extractall(join(ndks_dir, 'vlc_ndk'))
         
         if not isfile(aar):
             with current_directory(port_dir):
                 env = dict(environ)
                 env.update({
                     'ANDROID_ABI': arch.arch,
-                    'ANDROID_NDK': ndk_for_vlc,
+                    'ANDROID_NDK': join(ndks_dir, 'vlc_ndk', ndk_name),
                     'ANDROID_SDK': self.ctx.sdk_dir,
                 })
                 info("compiling vlc from sources")
