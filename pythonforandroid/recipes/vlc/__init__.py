@@ -1,8 +1,9 @@
 from pythonforandroid.toolchain import Recipe, current_directory
 from pythonforandroid.logger import info, debug, shprint, warning
-from os.path import join, isdir, isfile
+from os.path import join, isdir, isfile, dirname
 from os import environ
 import sh
+import zipfile
 
 
 class VlcRecipe(Recipe):
@@ -11,7 +12,8 @@ class VlcRecipe(Recipe):
     name = 'vlc'
 
     depends = []
-
+    specific_ndk = 'https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip'
+    ndks_dir = dirname(self.ctx.ndk_dir)
     port_git = 'https://github.com/videolan/vlc-android.git'
 #    vlc_git = 'http://git.videolan.org/git/vlc.git'
     ENV_LIBVLC_AAR = 'LIBVLC_AAR'
@@ -54,19 +56,26 @@ class VlcRecipe(Recipe):
         build_dir = self.get_build_dir(arch.arch)
         port_dir = join(build_dir, 'vlc-port-android')
         aar = self.aars[arch]
+        
+        # install specific ndk
+        specific_ndk_zip = self.download_file(specific_ndk, ndks_dir)
+        ndk_for_vlc = join(ndks_dir, 'ndk_for_vlc')
+        with zipfile.ZipFile(join(ndks_dir, specific_ndk_zip), 'r') as zip_ref:
+            zip_ref.extractall(ndk_for_vlc)
+        
         if not isfile(aar):
             with current_directory(port_dir):
                 env = dict(environ)
                 env.update({
                     'ANDROID_ABI': arch.arch,
-                    'ANDROID_NDK': '/home/c0ff330k/.buildozer/android/platform/android-ndk-r21e',
+                    'ANDROID_NDK': ndk_for_vlc,
                     'ANDROID_SDK': self.ctx.sdk_dir,
                 })
                 info("compiling vlc from sources")
                 debug("environment: {}".format(env))
                 if not isfile(join('bin', 'VLC-debug.apk')):
-                    shprint(sh.Command('./buildsystem/compile.sh'), '-a', 'armeabi-v7a', _env=env, _tail=500, _critical=True)
-                shprint(sh.Command('./buildsystem/compile.sh'), '-l', '-a', 'armeabi-v7a', '-r', _env=env, _tail=500, _critical=True)
+                    shprint(sh.Command('./buildsystem/compile.sh'), '-a', 'armeabi-v7a', _env=env, _tail=50, _critical=True)
+                shprint(sh.Command('./buildsystem/compile.sh'), '-l', '-a', 'armeabi-v7a', '-r', _env=env, _tail=50, _critical=True)
         shprint(sh.cp, '-a', aar, self.ctx.aars_dir)
 
 
