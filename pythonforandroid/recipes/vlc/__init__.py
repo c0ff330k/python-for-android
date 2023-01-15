@@ -39,7 +39,7 @@ class VlcRecipe(Recipe):
                     "in {} environment!".format(self.ENV_LIBVLC_AAR))
             info("libvlc-<ver>.aar should build "
                  "from sources at {}".format(port_dir))
-            if not isfile(join(port_dir, 'compile.sh')):
+            if not isfile(join(port_dir, 'buildsystem', 'compile.sh')):
                 info("clone vlc port for android sources from {}".format(
                             self.port_git))
                 shprint(sh.git, 'clone', '-b', '3.5.x', self.port_git, port_dir,
