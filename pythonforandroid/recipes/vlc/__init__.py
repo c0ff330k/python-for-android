@@ -1,8 +1,9 @@
 from pythonforandroid.toolchain import Recipe, current_directory
 from pythonforandroid.logger import info, debug, shprint, warning
-from os.path import join, isdir, isfile
-from os import environ
+from os.path import join, isdir, isfile, dirname
+from os import environ, listdir
 import sh
+import zipfile
 
 
 class VlcRecipe(Recipe):
@@ -11,7 +12,8 @@ class VlcRecipe(Recipe):
     name = 'vlc'
 
     depends = []
-
+    
+    specific_ndk = 'https://dl.google.com/android/repository/android-ndk-r14b-linux-x86_64.zip'
     port_git = 'http://git.videolan.org/git/vlc-ports/android.git'
 #    vlc_git = 'http://git.videolan.org/git/vlc.git'
     ENV_LIBVLC_AAR = 'LIBVLC_AAR'
@@ -55,12 +57,24 @@ class VlcRecipe(Recipe):
         build_dir = self.get_build_dir(arch.arch)
         port_dir = join(build_dir, 'vlc-port-android')
         aar = self.aars[arch]
+        
+        # install specific ndk
+        ndks_dir = dirname(self.ctx.ndk_dir)
+        ndk_name = ''
+        if isdir(join(ndks_dir, 'vlc_ndk_14')):
+            ndk_name = listdir(join(ndks_dir, 'vlc_ndk_14'))[0]
+        else:
+            shprint(sh.Command('wget'), '-O', join(ndks_dir, 'vlc_ndk_14.zip'), self.specific_ndk, _tail=50, _critical=True)
+            with zipfile.ZipFile(join(ndks_dir, 'vlc_ndk_14.zip'), 'r') as zip_ref:
+                ndk_name = zip_ref.namelist()[0]
+                zip_ref.extractall(join(ndks_dir, 'vlc_ndk_14'))
+        
         if not isfile(aar):
             with current_directory(port_dir):
                 env = dict(environ)
                 env.update({
                     'ANDROID_ABI': arch.arch,
-                    'ANDROID_NDK': self.ctx.ndk_dir,
+                    'ANDROID_NDK': join(ndks_dir, 'vlc_ndk_14', ndk_name),
                     'ANDROID_SDK': self.ctx.sdk_dir,
                 })
                 info("compiling vlc from sources")
