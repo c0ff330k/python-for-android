@@ -7,13 +7,13 @@ import zipfile
 
 
 class VlcRecipe(Recipe):
-    version = '3.0.0'
+    version = '3.5.x'
     url = None
     name = 'vlc'
 
     depends = []
     
-    specific_ndk = 'https://dl.google.com/android/repository/android-ndk-r14b-linux-x86_64.zip'
+    specific_ndk = 'https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip'
     port_git = 'http://git.videolan.org/git/vlc-ports/android.git'
 #    vlc_git = 'http://git.videolan.org/git/vlc.git'
     ENV_LIBVLC_AAR = 'LIBVLC_AAR'
@@ -42,7 +42,7 @@ class VlcRecipe(Recipe):
             if not isfile(join(port_dir, 'compile.sh')):
                 info("clone vlc port for android sources from {}".format(
                             self.port_git))
-                shprint(sh.git, 'clone', '-b', '3.0.x', self.port_git, port_dir,
+                shprint(sh.git, 'clone', '-b', '3.5.x', self.port_git, port_dir,
                         _tail=20, _critical=True)
 # now "git clone ..." is a part of compile.sh
 #            vlc_dir = join(port_dir, 'vlc')
@@ -53,7 +53,6 @@ class VlcRecipe(Recipe):
 
     def build_arch(self, arch):
         super().build_arch(arch)
-        input('CHANGE YOUR SYSTEM DEFAULT JAVA VERSION TO 8 AND ENTER ANY TEXT')
         build_dir = self.get_build_dir(arch.arch)
         port_dir = join(build_dir, 'vlc-port-android')
         aar = self.aars[arch]
@@ -61,31 +60,30 @@ class VlcRecipe(Recipe):
         # install specific ndk
         ndks_dir = dirname(self.ctx.ndk_dir)
         ndk_name = ''
-        if isdir(join(ndks_dir, 'vlc_ndk_14')):
-            ndk_name = listdir(join(ndks_dir, 'vlc_ndk_14'))[0]
+        if isdir(join(ndks_dir, 'vlc_ndk_21')):
+            ndk_name = listdir(join(ndks_dir, 'vlc_ndk_21'))[0]
         else:
-            shprint(sh.Command('wget'), '-O', join(ndks_dir, 'vlc_ndk_14.zip'), self.specific_ndk, _tail=50, _critical=True)
-            with zipfile.ZipFile(join(ndks_dir, 'vlc_ndk_14.zip'), 'r') as zip_ref:
+            shprint(sh.Command('wget'), '-O', join(ndks_dir, 'vlc_ndk_21.zip'), self.specific_ndk, _tail=50, _critical=True)
+            with zipfile.ZipFile(join(ndks_dir, 'vlc_ndk_21.zip'), 'r') as zip_ref:
                 ndk_name = zip_ref.namelist()[0]
-                zip_ref.extractall(join(ndks_dir, 'vlc_ndk_14'))
+                zip_ref.extractall(join(ndks_dir, 'vlc_ndk_21'))
         
         if not isfile(aar):
             with current_directory(port_dir):
                 env = dict(environ)
                 env.update({
                     'ANDROID_ABI': arch.arch,
-                    'ANDROID_NDK': join(ndks_dir, 'vlc_ndk_14', ndk_name),
+                    'ANDROID_NDK': join(ndks_dir, 'vlc_ndk_21', ndk_name),
                     'ANDROID_SDK': self.ctx.sdk_dir,
                 })
                 info("compiling vlc from sources")
                 debug("environment: {}".format(env))
                 if not isfile(join('bin', 'VLC-debug.apk')):
-                    shprint(sh.Command('./compile.sh'), _env=env,
+                    shprint(sh.Command('./buildsystem/compile.sh'), _env=env,
                             _tail=50, _critical=True)
                 shprint(sh.Command('./compile-libvlc.sh'), _env=env,
                         _tail=50, _critical=True)
         shprint(sh.cp, '-a', aar, self.ctx.aars_dir)
-        input('CHANGE YOUR SYSTEM DEFAULT JAVA VERSION TO 17 AND ENTER ANY TEXT')
 
 
 recipe = VlcRecipe()
