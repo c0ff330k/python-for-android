@@ -12,7 +12,7 @@ class VlcRecipe(Recipe):
 
     depends = []
 
-    port_git = 'https://github.com/c0ff330k/vlc-android.git'
+    port_git = 'http://git.videolan.org/git/vlc-ports/android.git'
 #    vlc_git = 'http://git.videolan.org/git/vlc.git'
     ENV_LIBVLC_AAR = 'LIBVLC_AAR'
     aars = {}  # for future use of multiple arch
@@ -49,9 +49,9 @@ class VlcRecipe(Recipe):
 #                shprint(sh.git, 'clone', self.vlc_git, vlc_dir,
 #                            _tail=20, _critical=True)
 
-
     def build_arch(self, arch):
         super().build_arch(arch)
+        input('CHANGE YOUR SYSTEM DEFAULT JAVA VERSION TO 8 AND ENTER ANY TEXT')
         build_dir = self.get_build_dir(arch.arch)
         port_dir = join(build_dir, 'vlc-port-android')
         aar = self.aars[arch]
@@ -71,6 +71,7 @@ class VlcRecipe(Recipe):
                 shprint(sh.Command('./compile-libvlc.sh'), _env=env,
                         _tail=50, _critical=True)
         shprint(sh.cp, '-a', aar, self.ctx.aars_dir)
+        input('CHANGE YOUR SYSTEM DEFAULT JAVA VERSION TO 17 AND ENTER ANY TEXT')
 
 
 recipe = VlcRecipe()
